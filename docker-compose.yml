@@ -1,0 +1,12 @@
+version: '2'
+services:
+  zfs:
+    restart: always
+    build: ./zfs
+    privileged: true
+    ports:
+      - 22:22
+    volumes:
+      - resin-data:/data
+volumes:
+  resin-data:
