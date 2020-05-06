@@ -38,3 +38,36 @@ The filesystem can then be mounted
     mypool                          /mypool
     mypool/encryptedfs              /mypool/encryptedfs
 ```
+
+Alternative way for FDE can be achieved with LUKS. This may be necessary when installing zfs versions below 0.8 or any other file system without native encryption. We are going to use /dev/sdb here. Here's what to do:
+1. Create LUKS header on /dev/sdb
+```
+    # lsblk /dev/sdb
+    NAME MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+    sdb    8:16   0  1.4T  0 disk
+    # cryptsetup luksFormat /dev/sdb
+
+    WARNING!
+    ========
+    This will overwrite data on /dev/sdb irrevocably.
+
+    Are you sure? (Type uppercase yes): YES
+    Enter passphrase for /dev/sdb:
+    Verify passphrase:
+    #
+```
+
+2. Open the disk and add device mapper entry for it:
+```
+    # cryptsetup open /dev/sdb crypt
+    Enter passphrase for /dev/sdb:
+    #
+```
+3. Create the pool using mapped device:
+```
+    # zpool create lukspool /dev/mapper/crypt
+    # zpool list
+    NAME       SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
+    lukspool  1.36T   112K  1.36T        -         -     0%     0%  1.00x    ONLINE  -
+    mypool     119G   400K   119G        -         -     0%     0%  1.00x    ONLINE  -
+```
