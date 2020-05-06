@@ -34,4 +34,6 @@ RUN ldconfig
 
 WORKDIR /usr/src/app
 
+ENV UDEV=1
+
 CMD ["bash"]
