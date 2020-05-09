@@ -1,8 +1,7 @@
 FROM balenalib/intel-nuc-ubuntu
 
 ENV UDEV=1
-# skip interactive prompt during pkg installation
-# ARG DEBIAN_FRONTEND=noninteractive
+
 RUN install_packages vim cryptsetup curl wget uuid-dev libblkid-dev libssl-dev dkms zlib1g-dev
 
 WORKDIR /usr/src/app
@@ -30,7 +29,6 @@ RUN ./configure --with-linux=/lib/modules/${KERNEL}/build/
 RUN make
 RUN make install
 RUN ldconfig
-# RUN echo zfs >> /etc/modules-load.d/modules.conf
 
 WORKDIR /usr/src/app
 
