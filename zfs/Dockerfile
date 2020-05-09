@@ -1,9 +1,9 @@
 FROM balenalib/intel-nuc-ubuntu
 
-RUN apt update --fix-missing
+ENV UDEV=1
 # skip interactive prompt during pkg installation
-ARG DEBIAN_FRONTEND=noninteractive
-RUN apt -y install vim cryptsetup curl wget uuid-dev libblkid-dev libssl-dev dkms zlib1g-dev
+# ARG DEBIAN_FRONTEND=noninteractive
+RUN install_packages vim cryptsetup curl wget uuid-dev libblkid-dev libssl-dev dkms zlib1g-dev
 
 WORKDIR /usr/src/app
 
@@ -20,9 +20,9 @@ RUN mv /lib/modules/$KERNEL/kernel_modules_headers /lib/modules/$KERNEL/build
 
 RUN ln -s /lib64/ld-linux-x86-64.so.2  /lib/ld-linux-x86-64.so.2
 
-# GET zfs sources
+# install zfs kernel modules and userland utils
 WORKDIR /usr/src
-RUN wget https://github.com/zfsonlinux/zfs/releases/download/zfs-0.8.3/zfs-0.8.3.tar.gz
+RUN wget --quiet https://github.com/zfsonlinux/zfs/releases/download/zfs-0.8.3/zfs-0.8.3.tar.gz
 RUN tar -xf zfs-0.8.3.tar.gz
 RUN cd zfs-0.8.3
 WORKDIR /usr/src/zfs-0.8.3
@@ -33,7 +33,5 @@ RUN ldconfig
 # RUN echo zfs >> /etc/modules-load.d/modules.conf
 
 WORKDIR /usr/src/app
-
-ENV UDEV=1
 
 CMD ["bash"]
