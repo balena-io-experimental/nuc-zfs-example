@@ -2,10 +2,9 @@ version: '2'
 services:
   zfs:
     restart: always
+    hostname: nuc-zfs
     build: ./zfs
     privileged: true
-    ports:
-      - 22:22
     volumes:
       - resin-data:/data
 volumes:
